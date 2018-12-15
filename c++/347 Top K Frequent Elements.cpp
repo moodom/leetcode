@@ -22,6 +22,9 @@
 #include<vector>
 #include<algorithm>
 using namespace std;
+#define PARENT(i) ((i-1)/2)
+#define LEFT(i) (2*i+1)
+#define RIGHT(i) (2*i+2)
 
 class Solution {
 public:
@@ -50,13 +53,73 @@ public:
         }
     }mycmp;
 };
+class PriorityQueue {
+public:
+    void maxHeapify(vector<pair<int,int>>& A, int i){
+        int largest=i;
+        int l,r;
+        int N=A.size();
+        l=LEFT(i);
+        r=RIGHT(i);
+       if(l<N && A[largest].second<A[l].second){
+          largest=l;
+        }
+        if(r<N && A[largest].second<A[r].second){
+            largest=r;
+        }
+        if(largest!=i){
+            swap(A[i],A[largest]);
+            maxHeapify(A,largest);
+        }
+    }
+
+    void heapInsert(vector<pair<int,int>>& A,pair<int,int> key){
+        A.push_back(key);
+        int i=A.size()-1;
+        while(i>0 && A[PARENT(i)].second<A[i].second){
+            swap(A[i],A[PARENT(i)]);
+            i=PARENT(i);
+        }
+
+    }
+    pair<int,int> extractMax(vector<pair<int,int>>& A){
+        pair<int,int> maxKey;
+        maxKey=A.back();
+        A.erase(A.end());
+        return maxKey;
+    }
+    vector<int> topKFrequent2(vector<int>& nums, int k) {
+
+        vector<int> topnums;
+        pair<int,int> temp;
+        unordered_map<int,int> numFrequent;
+        for(const auto& num:nums) numFrequent[num]++;
+        vector<pair<int, int>> pairFrequent;
+        for(auto m:numFrequent){
+            temp.first=m.first;
+            temp.second=m.second;
+            heapInsert(pairFrequent,temp);
+        }
+        int len=pairFrequent.size()-1;
+        for(int i=0;i<k;i++){
+            swap(pairFrequent[0],pairFrequent[len-i]);
+            topnums.push_back(extractMax(pairFrequent).first);
+            maxHeapify(pairFrequent,0);
+        }
+        return topnums;
+    }
+
+};
+
+
+
 int main()
 {
-    vector<int> nums={1,1,1,2,2,3};
+    vector<int> nums={1};
     vector<int> topnums;
-    int k=2;
-    Solution a;
-    topnums=a.topKFrequent(nums,k);
+    int k=1;
+    PriorityQueue a;
+    topnums=a.topKFrequent2(nums,k);
     for(auto num:topnums) cout<<num<<endl;
 
 }
