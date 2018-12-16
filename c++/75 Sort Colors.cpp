@@ -32,11 +32,24 @@ public:
         }
 
     }
+    void sortColors2(vector<int>& A){
+        vector<int> B{A};
+        int c[3]={0,0,0};
+        int index;
+        for(auto a:A) c[a]++;
+        c[1]=c[0]+c[1];
+        c[2]=c[1]+c[2];
+        for(int i=A.size()-1;i>=0;i--){
+            index=B[i];
+            A[c[index]-1]=index;
+            c[index]--;
+        }
+    }
 };
 int main()
 {
-    vector<int> num={2,0,2,1,1,0};
+    vector<int> num={2,0,2};
     Solution a;
-    a.sortColors(num);
+    a.sortColors2(num);
     for(auto i:num) cout<<i<<endl;
 }
